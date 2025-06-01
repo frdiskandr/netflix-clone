@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nonton Bareng via /nobar</title>
+    <link rel="stylesheet" href="/style.css"></head>
+<body>
+    <div class="container">
+        <h1>Platform Nonton Bareng</h1>
+        <p>ID Anda: <span id="userIdSpan">Memuat...</span></p>
+        <p>Status Room: <span id="roomStatus">Belum bergabung</span></p>
+
+        <div class="room-controls">
+            <div class="control-group">
+                <h3>Buat Room Baru</h3>
+                <input type="text" id="newRoomName" placeholder="Nama Room Baru">
+                <button id="createRoomBtn">Buat Room</button>
+            </div>
+            <div class="control-group">
+                <h3>Gabung Room</h3>
+                <input type="text" id="joinRoomName" placeholder="Nama Room yang Ada">
+                <button id="joinRoomBtn">Gabung Room</button>
+            </div>
+        </div>
+
+        <div id="video-section" style="display: none;"> <h3>Sedang di Room: <span id="currentRoomName"></span></h3>
+            <div class="control-group">
+                <label for="videoUrlInput">URL Video (misal: .mp4):</label>
+                <input type="text" id="videoUrlInput" placeholder="Masukkan URL video .mp4">
+                <button id="setVideoBtn">Set Video untuk Room</button>
+            </div>
+            <div id="video-player-container">
+                <video id="mainVideoPlayer" controls width="720"></video>
+                </div>
+        </div>
+        <p id="messageArea" class="message"></p>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/nobar.js"></script> </body>
+</html>

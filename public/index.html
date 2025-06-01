@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>frdiskndr Streaming</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Netflix+Sans:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --netflix-black: #141414;
+        --netflix-red: #e50914;
+        --text-color: #ffffff;
+        --secondary-text: #808080;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Netflix Sans", "Helvetica Neue", Helvetica, Arial,
+          sans-serif;
+        background-color: var(--netflix-black);
+        color: var(--text-color);
+        min-height: 100vh;
+      }
+      header {
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.7) 10%,
+          transparent
+        );
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        padding: 20px 4%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.3s;
+      }
+      header.scrolled {
+        background: var(--netflix-black);
+      }
+      .logo {
+        color: var(--netflix-red);
+        font-size: 2rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        text-decoration: none;
+      }
+
+      nav {
+        display: flex;
+        gap: 20px;
+      }
+      nav a {
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s;
+      }
+      nav a:hover {
+        color: var(--secondary-text);
+      }
+
+      @media screen and (max-width: 768px) {
+        nav {
+          display: none;
+        }
+      }
+      .hero {
+        position: relative;
+        height: 80vh;
+        background: linear-gradient(to top, var(--netflix-black), transparent),
+          linear-gradient(to bottom, var(--netflix-black), transparent);
+        display: flex;
+        align-items: center;
+        padding: 0 4%;
+      }
+      .hero-content {
+        max-width: 600px;
+        z-index: 2;
+      }
+      .hero-title {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+      .hero-description {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+      }
+      .hero-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+      .btn {
+        padding: 0.8rem 2rem;
+        border-radius: 4px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+      }
+      .btn-play {
+        background-color: var(--text-color);
+        color: var(--netflix-black);
+      }
+      .btn-play:hover {
+        background-color: rgba(255, 255, 255, 0.75);
+      }
+      .btn-more {
+        background-color: rgba(109, 109, 110, 0.7);
+        color: var(--text-color);
+      }
+      .btn-more:hover {
+        background-color: rgba(109, 109, 110, 0.4);
+      }
+      .video-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .content-section {
+        padding: 3rem 4%;
+      }
+      .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      .movie-row {
+        display: flex;
+        gap: 0.5rem;
+        overflow-x: auto;
+        padding: 1rem 0;
+      }
+      .movie-row::-webkit-scrollbar {
+        display: none;
+      }
+      .movie-card {
+        flex: 0 0 auto;
+        width: 200px;
+        height: 300px;
+        border-radius: 4px;
+        overflow: hidden;
+        transition: transform 0.3s;
+        cursor: pointer;
+      }
+      .movie-card:hover {
+        transform: scale(1.05);
+      }
+      .movie-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      footer {
+        background-color: var(--netflix-black);
+        color: var(--secondary-text);
+        padding: 2rem 4%;
+        text-align: center;
+        margin-top: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="/" class="logo">frdiskndr</a>
+      <nav>
+        <a href="#">Beranda</a>
+        <a href="#">Serial TV</a>
+        <a href="#">Film</a>
+        <a href="#">Terbaru</a>
+        <a href="watch/1">Daftar Saya</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="video-container">
+          <video id="videoPlayer" autoplay muted loop>
+            <source src="/farid.mp4" type="video/mp4" />
+            Browser Anda tidak mendukung tag video.
+          </video>
+        </div>
+        <div class="hero-content">
+          <h1 class="hero-title">Streaming Video</h1>
+          <p class="hero-description">
+            Nikmati pengalaman menonton yang luar biasa dengan kualitas
+            streaming terbaik. Tonton di mana saja, kapan saja.
+          </p>
+          <div class="hero-buttons">
+            <button
+              class="btn btn-play"
+              onclick="document.getElementById('videoPlayer').play()"
+            >
+              ▶ Putar
+            </button>
+            <button class="btn btn-more">ℹ Info Selengkapnya</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2 class="section-title">Terbaru di frdiskndr</h2>
+        <div class="movie-row">
+          <div class="movie-card">
+            <video muted>
+              <source src="/video" type="video/mp4" />
+            </video>
+          </div>
+          <!-- Tambahkan lebih banyak movie-card sesuai kebutuhan -->
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2 class="section-title">Sedang Tren</h2>
+        <!-- card movi -->
+        <!-- <div class="movie-row">
+          <div class="movie-card">
+            <video muted>
+              <source src="/video" type="video/mp4" />
+            </video>
+          </div>
+          Tambahkan lebih banyak movie-card sesuai kebutuhan
+        </div> -->
+        <iframe
+          src="https://id2.idlixvip.asia/"
+          width="100%"
+          height="900"
+          style="border: 0"
+          allowfullscreen=""
+          aria-controls="true"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2024 frdiskndr Streaming. All rights reserved.</p>
+    </footer>
+
+    <script>
+      // Header scroll effect
+      window.addEventListener("scroll", () => {
+        const header = document.querySelector("header");
+        if (window.scrollY > 50) {
+          header.classList.add("scrolled");
+        } else {
+          header.classList.remove("scrolled");
+        }
+      });
+
+      // Hover effect untuk movie cards
+      document.querySelectorAll(".movie-card").forEach((card) => {
+        card.addEventListener("mouseenter", () => {
+          const video = card.querySelector("video");
+          if (video) {
+            video.play();
+          }
+        });
+        card.addEventListener("mouseleave", () => {
+          const video = card.querySelector("video");
+          if (video) {
+            video.pause();
+            video.currentTime = 0;
+          }
+        });
+      });
+    </script>
+
+    <script>
+      const data = [
+        {
+          id: 1,
+          link: "/video",
+        },
+        {
+          id: 2,
+          link: "/video",
+        }
+      ];
+
+      const movieList = () => {
+        // Get all movie-row containers
+        const movieContainers = document.getElementsByClassName("movie-row");
+
+        // Add movies to each container
+        Array.from(movieContainers).forEach((container) => {
+          data.forEach((movie) => {
+            try {
+              const movieCard = document.createElement("div");
+              movieCard.classList.add("movie-card");
+              movieCard.innerHTML = `
+                            <video muted>
+                                <source src="${movie.link}" type="video/mp4" />
+                            </video>
+                        `;
+              container.appendChild(movieCard);
+            } catch (error) {
+              console.error(
+                `Error creating movie card for movie ${movie.id}:`,
+                error
+              );
+            }
+          });
+        });
+      };
+
+      // Call the function when the document is loaded
+      document.addEventListener("DOMContentLoaded", movieList);
+    </script>
+  </body>
+</html>
