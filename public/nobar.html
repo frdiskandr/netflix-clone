@@ -1,42 +1,48 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nonton Bareng via /nobar</title>
-    <link rel="stylesheet" href="/style.css"></head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nonton Bareng - Gaya Netflix</title>
+    <link rel="stylesheet" href="./style/nobar.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
 <body>
-    <div class="container">
-        <h1>Platform Nonton Bareng</h1>
-        <p>ID Anda: <span id="userIdSpan">Memuat...</span></p>
-        <p>Status Room: <span id="roomStatus">Belum bergabung</span></p>
+    <div class="player-wrapper">
+        <header class="player-header">
+            <a href="/" class="player-logo">frdiskndr</a>
+            <div class="video-title-container">
+                <button id="backButton" class="header-icon-button" aria-label="Kembali">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 id="videoTitle">Judul Video Saat Ini</h1>
+            </div>
+            <button id="toggleChatButton" class="header-icon-button" aria-label="Toggle Chat">
+                <i class="fas fa-comments"></i>
+            </button>
+        </header>
 
-        <div class="room-controls">
-            <div class="control-group">
-                <h3>Buat Room Baru</h3>
-                <input type="text" id="newRoomName" placeholder="Nama Room Baru">
-                <button id="createRoomBtn">Buat Room</button>
-            </div>
-            <div class="control-group">
-                <h3>Gabung Room</h3>
-                <input type="text" id="joinRoomName" placeholder="Nama Room yang Ada">
-                <button id="joinRoomBtn">Gabung Room</button>
-            </div>
-        </div>
+        <main class="video-main-content">
+            <video id="main-video" controls autoplay loop width="100%"></video>
+        </main>
 
-        <div id="video-section" style="display: none;"> <h3>Sedang di Room: <span id="currentRoomName"></span></h3>
-            <div class="control-group">
-                <label for="videoUrlInput">URL Video (misal: .mp4):</label>
-                <input type="text" id="videoUrlInput" placeholder="Masukkan URL video .mp4">
-                <button id="setVideoBtn">Set Video untuk Room</button>
+        <aside class="chat-sidebar" id="chatSidebar">
+            <div class="chat-sidebar-header">
+                <h2>Diskusi</h2>
+                <button id="closeChatButton" class="header-icon-button" aria-label="Tutup Chat">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div id="video-player-container">
-                <video id="mainVideoPlayer" controls width="720"></video>
-                </div>
-        </div>
-        <p id="messageArea" class="message"></p>
+            <ul id="messages">
+                </ul>
+            <form id="chat-form">
+                <input id="chat-input" autocomplete="off" placeholder="Ketik pesan..." />
+                <button type="submit" aria-label="Kirim Pesan"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </aside>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/nobar.js"></script> </body>
+    <script src="./js/client.js"></script>
+</body>
 </html>

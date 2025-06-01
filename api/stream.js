@@ -1,4 +1,3 @@
-import e from "express";
 import express from "express";
 import fs from "fs";
 import path from "path";
@@ -27,6 +26,16 @@ r.get("/watch", (req, res) => {
     return res.redirect("/watch.html");
   }
 });
+
+r.get("/watch/:url", (req, res) => {
+  const { url } = req.params;
+  res.render("nobar", {
+    videoUrl: url,
+        videoTitle: 'Movie Title', // Bisa diambil dari database
+        roomName: 'Movie Night',
+        viewerCount: 0,
+  })
+})
 
 // Rute untuk streaming video
 r.get("/video", (req, res) => {

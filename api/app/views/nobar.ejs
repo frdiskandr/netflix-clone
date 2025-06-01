@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nonton Bareng!</title>
+    <style>
+      /* public/style.css */
+
+      :root {
+        --netflix-red: #e50914;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        background-color: #121212;
+        color: #e0e0e0;
+        margin: 0;
+        padding: 1rem;
+        display: flex;
+        justify-content: center;
+      }
+      header {
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.7) 10%,
+          transparent
+        );
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        padding: 20px 4%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.3s;
+      }
+      header.scrolled {
+        background: var(--netflix-black);
+      }
+      .logo {
+        color: var(--netflix-red);
+        font-size: 2rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        text-decoration: none;
+      }
+
+      nav {
+        display: flex;
+        gap: 20px;
+      }
+      nav a {
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s;
+      }
+      nav a:hover {
+        color: var(--secondary-text);
+      }
+
+      @media screen and (max-width: 768px) {
+        nav {
+          display: none;
+        }
+      }
+
+      .app-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        width: 100%;
+        max-width: 1400px;
+        padding-top: 5em;
+      }
+
+      .video-container {
+        flex: 3;
+        min-width: 300px;
+      }
+
+      h1,
+      h2 {
+        color: #fff;
+        border-bottom: 2px solid var(--netflix-red);
+        padding-bottom: 10px;
+        margin-top: 0;
+      }
+
+      video {
+        width: 100%;
+        border-radius: 8px;
+        background-color: #000;
+      }
+
+      .chat-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background-color: #1e1e1e;
+        border-radius: 8px;
+        padding: 1rem;
+        min-width: 280px;
+        max-height: 70vh;
+      }
+
+      #messages {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        flex-grow: 1;
+        overflow-y: auto;
+        margin-bottom: 10px;
+      }
+
+      #messages li {
+        padding: 0.5rem 1rem;
+        word-wrap: break-word;
+      }
+
+      #messages li:nth-child(odd) {
+        background: #2c2c2c;
+      }
+
+      #chat-form {
+        display: flex;
+      }
+
+      #chat-input {
+        border: 1px solid #444;
+        padding: 10px;
+        width: 100%;
+        margin-right: 0.5rem;
+        border-radius: 4px;
+        background: #333;
+        color: #fff;
+      }
+
+      #chat-form button {
+        background: var(--netflix-red);
+        border: none;
+        padding: 10px;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      #chat-form button:hover {
+        background: var(--netflix-red);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="/" class="logo">frdiskndr</a>
+      <nav>
+        <a href="#">Beranda</a>
+        <a href="#">Serial TV</a>
+        <a href="#">Film</a>
+        <a href="#">Terbaru</a>
+        <a href="watch/1">Daftar Saya</a>
+      </nav>
+    </header>
+
+    <div class="app-container">
+      <div class="video-container">
+        <h1>Nonton Bareng</h1>
+        <video id="main-video" controls width="100%"></video>
+      </div>
+      <div class="chat-container">
+        <h2>Chat Room</h2>
+        <ul id="messages"></ul>
+        <form id="chat-form" action="">
+          <input
+            id="chat-input"
+            autocomplete="off"
+            placeholder="Ketik pesan..."
+          /><button>Kirim</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      // public/client.js
+      const socket = io();
+
+      // Elemen UI
+      const video = document.getElementById("main-video");
+      const chatForm = document.getElementById("chat-form");
+      const chatInput = document.getElementById("chat-input");
+      const messages = document.getElementById("messages");
+
+      // Flag untuk mencegah event loop tak terbatas
+      // Jika kita menerima perintah dari server, kita tidak perlu mengirim balik perintah yang sama
+      let isReceivingSync = false;
+
+      // --- SINKRONISASI VIDEO ---
+
+      // Menerima state awal saat baru bergabung
+      socket.on("syncInitialState", (state) => {
+        isReceivingSync = true;
+        console.log("Menerima state awal:", state);
+        video.src = state.src;
+        video.currentTime = state.currentTime;
+        if (state.isPlaying) {
+          video
+            .play()
+            .catch((e) =>
+              console.log("Browser mencegah autoplay. Klik untuk memulai.", e)
+            );
+        } else {
+          video.pause();
+        }
+        // Beri jeda singkat sebelum mengizinkan pengiriman event lagi
+        setTimeout(() => {
+          isReceivingSync = false;
+        }, 150);
+      });
+
+      // Event listener di video player untuk mengirim update ke server
+      video.addEventListener("play", () => {
+        if (isReceivingSync) return;
+        socket.emit("play", video.currentTime);
+      });
+
+      video.addEventListener("pause", () => {
+        if (isReceivingSync) return;
+        socket.emit("pause", video.currentTime);
+      });
+
+      video.addEventListener("seeked", () => {
+        if (isReceivingSync) return;
+        socket.emit("seek", video.currentTime);
+      });
+
+      // Menerima perintah sinkronisasi dari server
+      socket.on("playVideo", (time) => {
+        isReceivingSync = true;
+        // Toleransi kecil untuk mencegah seek yang tidak perlu karena latency
+        if (Math.abs(video.currentTime - time) > 0.5) {
+          video.currentTime = time;
+        }
+        video.play();
+        setTimeout(() => {
+          isReceivingSync = false;
+        }, 150);
+      });
+
+      socket.on("pauseVideo", (time) => {
+        isReceivingSync = true;
+        video.currentTime = time;
+        video.pause();
+        setTimeout(() => {
+          isReceivingSync = false;
+        }, 150);
+      });
+
+      socket.on("seekVideo", (time) => {
+        isReceivingSync = true;
+        video.currentTime = time;
+        setTimeout(() => {
+          isReceivingSync = false;
+        }, 150);
+      });
+
+      // --- LOGIKA CHAT ---
+
+      chatForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (chatInput.value) {
+          socket.emit("chatMessage", chatInput.value);
+          chatInput.value = "";
+        }
+      });
+
+      socket.on("newChatMessage", (msg) => {
+        const item = document.createElement("li");
+        item.textContent = `${msg.user}: ${msg.text}`;
+        messages.appendChild(item);
+        // Auto-scroll ke bawah
+        messages.scrollTop = messages.scrollHeight;
+      });
+    </script>
+  </body>
+</html>

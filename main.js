@@ -10,171 +10,96 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-class main {
-  // frdiskndr
-  // Api (Application prgraming interface)
+let videoState = {
+    // Ganti dengan URL video default Anda
+    src: "https://resource.flexclip.com/templates/video/720p/high-tech-space-universe-science-fiction-star-war-earth-planet-movie-trailer-teaser-opener-intro.mp4?v=1.1.0.5.8", // video
+    isPlaying: false,
+    currentTime: 0,
+    lastUpdate: Date.now()
+};
 
-  static main() {
-    // init app and middleware
-    const app = express();
-    const server = http.createServer(app);
-    const io = new Server(server);
-    app.use(express.json());
-    app.use(cors());
-    app.use(express.static("public"));
-    // set render view
-    app.set('view engine', 'ejs');
-    app.set('views', path.join(__dirname, '/api/app/views'))
+// init app and middleware
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
-    // route
-    app.use(router);
+app.use(express.json());
+app.use(cors());
+app.use(express.static("public"));
+// set render view
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "/api/app/views"));
 
-    // config
-    dotenv.config();
-    const Port = process.env.PORT || 3000;
-    server.listen(Port, () => {
-      console.log(`Server running on http://localhost:${Port}`);
-    });
+// route
+app.use(router);
 
-    // const activeRooms = {};
+// config
+dotenv.config();
+const Port = process.env.PORT || 3000;
+server.listen(Port, () => {
+  console.log(`Server running on http://localhost:${Port}`);
+});
 
-    // // web socket
-    // io.on("connection", (socket) => {
-    //   const userId = socket.id;
-    //   console.log(`a user connected: ${userId}`);
+//! socket
+// --- LOGIKA SOCKET.IO ---
+const ROOM_NAME = "global-watch-party";
 
-    //   // Event untuk membuat room baru
-    //   socket.on("createRoom", (roomName, callback) => {
-    //     if (activeRooms[roomName]) {
-    //       // Jika room sudah ada
-    //       callback({
-    //         success: false,
-    //         message: `Room "${roomName}" sudah ada.`,
-    //       });
-    //       return;
-    //     }
-    //     socket.join(roomName); // Klien otomatis bergabung ke room yang dibuatnya
-    //     activeRooms[roomName] = {
-    //       users: [userId],
-    //       videoState: { currentTime: 0, isPlaying: false, videoSrc: "" },
-    //     }; // Inisialisasi state room
-    //     console.log(
-    //       `Pengguna ${userId} membuat dan bergabung ke room: ${roomName}`
-    //     );
-    //     callback({
-    //       success: true,
-    //       message: `Room "${roomName}" berhasil dibuat.`,
-    //       roomName: roomName,
-    //     });
-    //     // Broadcast ke semua (opsional, jika ingin menampilkan daftar room aktif)
-    //     io.emit("roomListUpdate", Object.keys(activeRooms));
-    //   });
+io.on("connection", (socket) => {
+  console.log(`Pengguna terhubung: ${socket.id}`);
 
-    //   // Event untuk bergabung ke room yang sudah ada
-    //   socket.on("joinRoom", (roomName, callback) => {
-    //     if (!activeRooms[roomName]) {
-    //       callback({
-    //         success: false,
-    //         message: `Room "${roomName}" tidak ditemukan.`,
-    //       });
-    //       return;
-    //     }
-    //     socket.join(roomName);
-    //     activeRooms[roomName].users.push(userId);
-    //     console.log(`Pengguna ${userId} bergabung ke room: ${roomName}`);
+  // Langsung masukkan pengguna ke room global
+  socket.join(ROOM_NAME);
 
-    //     // Kirim state video saat ini ke pengguna yang baru bergabung
-    //     socket.emit("initialVideoState", activeRooms[roomName].videoState);
-
-    //     callback({
-    //       success: true,
-    //       message: `Berhasil bergabung ke room "${roomName}".`,
-    //       roomName: roomName,
-    //     });
-    //     // Bisa juga broadcast ke anggota room lain bahwa ada user baru (opsional)
-    //     socket.to(roomName).emit("userJoined", userId);
-    //   });
-
-    //   // Event untuk menyinkronkan sumber video
-    //   socket.on("setVideoSource", (data) => {
-    //     // data = { room, src }
-    //     if (activeRooms[data.room]) {
-    //       activeRooms[data.room].videoState.videoSrc = data.src;
-    //       activeRooms[data.room].videoState.currentTime = 0; // Reset waktu saat video baru
-    //       activeRooms[data.room].videoState.isPlaying = false;
-    //       // Broadcast ke semua di room bahwa sumber video berubah
-    //       io.to(data.room).emit("videoSourceChanged", data.src);
-    //     }
-    //   });
-
-    //   // Event sinkronisasi video (play, pause, seek)
-    //   socket.on("syncPlay", (data) => {
-    //     // data = { room, time }
-    //     if (activeRooms[data.room]) {
-    //       activeRooms[data.room].videoState.isPlaying = true;
-    //       activeRooms[data.room].videoState.currentTime = data.time;
-    //       socket.to(data.room).emit("playVideo", data.time);
-    //     }
-    //   });
-
-    //   socket.on("syncPause", (data) => {
-    //     // data = { room }
-    //     if (activeRooms[data.room]) {
-    //       activeRooms[data.room].videoState.isPlaying = false;
-    //       // Waktu terakhir mungkin sudah disimpan dari event 'play' atau 'seek'
-    //       socket
-    //         .to(data.room)
-    //         .emit("pauseVideo", activeRooms[data.room].videoState.currentTime);
-    //     }
-    //   });
-
-    //   socket.on("syncSeek", (data) => {
-    //     // data = { room, time }
-    //     if (activeRooms[data.room]) {
-    //       activeRooms[data.room].videoState.currentTime = data.time;
-    //       socket.to(data.room).emit("seekVideo", data.time);
-    //     }
-    //   });
-
-    //   socket.on("cursorMove", (data) => {
-    //     socket.to(data.room).emit("updateCursor", {
-    //       id: userId,
-    //       x: data.x,
-    //       y: data.y,
-    //     });
-    //   });
-
-    //   socket.on("disconnecting", () => {
-    //     // Iterasi melalui semua room tempat socket ini bergabung
-    //     socket.rooms.forEach((room) => {
-    //       if (room !== socket.id) {
-    //         // Jangan proses room default socket itu sendiri
-    //         if (activeRooms[room]) {
-    //           // Hapus user dari daftar di room
-    //           activeRooms[room].users = activeRooms[room].users.filter(
-    //             (id) => id !== userId
-    //           );
-    //           console.log(`Pengguna ${userId} keluar dari room: ${room}`);
-    //           // Jika room kosong, hapus room (opsional)
-    //           if (activeRooms[room].users.length === 0) {
-    //             delete activeRooms[room];
-    //             console.log(`Room ${room} dihapus karena kosong.`);
-    //             io.emit("roomListUpdate", Object.keys(activeRooms)); // Update daftar room
-    //           } else {
-    //             // Beri tahu anggota room lain bahwa user ini keluar
-    //             io.to(room).emit("userLeft", userId);
-    //           }
-    //         }
-    //         io.to(room).emit("removeCursor", userId); // Hapus kursor pengguna yang disconnect
-    //       }
-    //     });
-    //   });
-
-    //   socket.on("disconnect", () => {
-    //     console.log(`user disconnected : ${userId}`);
-    //   });
-    // });
+  // Saat pengguna baru bergabung, kirim state video saat ini HANYA ke dia
+  // agar videonya sinkron dengan yang lain.
+  if (videoState.isPlaying) {
+    // Jika video sedang berjalan, perkirakan waktu saat ini
+    const elapsed = (Date.now() - videoState.lastUpdate) / 1000;
+    videoState.currentTime += elapsed;
   }
-}
+  socket.emit("syncInitialState", videoState);
 
-main["main"]();
+  // -- Menangani Event dari Klien --
+
+  // Ketika klien menekan play
+  socket.on("play", (time) => {
+    videoState.isPlaying = true;
+    videoState.currentTime = time;
+    videoState.lastUpdate = Date.now();
+    // Broadcast ke semua pengguna LAIN di room bahwa video diputar
+    socket.to(ROOM_NAME).emit("playVideo", time);
+  });
+
+  // Ketika klien menekan pause
+  socket.on("pause", (time) => {
+    videoState.isPlaying = false;
+    videoState.currentTime = time;
+    // Broadcast ke semua pengguna LAIN bahwa video dijeda
+    socket.to(ROOM_NAME).emit("pauseVideo", time);
+  });
+
+  // Ketika klien melakukan seek (menggeser durasi)
+  socket.on("seek", (time) => {
+    videoState.currentTime = time;
+    videoState.lastUpdate = Date.now();
+    // Broadcast ke semua pengguna LAIN
+    socket.to(ROOM_NAME).emit("seekVideo", time);
+  });
+
+  // Ketika klien mengirim pesan chat
+  socket.on("chatMessage", (msg) => {
+    // Broadcast pesan ke SEMUA pengguna di room (termasuk pengirim)
+    io.to(ROOM_NAME).emit("newChatMessage", {
+      user: `User-${socket.id.substring(0, 5)}`,
+      text: msg,
+    });
+  });
+
+  // Ketika klien terputus
+  socket.on("disconnect", () => {
+    console.log(`Pengguna terputus: ${socket.id}`);
+  });
+});
+
+export default { app, server, io, __dirname, __filename };
+// export default main;

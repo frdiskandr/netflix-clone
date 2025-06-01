@@ -1,103 +1,275 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
+/* public/style.css */
+:root {
+    /* Warna Dasar Netflix */
+    --netflix-background: #141414;
+    --netflix-surface: #181818; /* Untuk card, sidebar */
+    --netflix-primary-text: #ffffff;
+    --netflix-secondary-text: #b3b3b3;
+    --netflix-red: #e50914;
+    --netflix-red-darker: #b20710;
+    --netflix-border: #303030;
+
+    /* Deret Fibonacci untuk Spasi */
+    --fib-0: 0px; /* Meskipun 0 bukan bagian dari deret standar, berguna */
+    --fib-1: 5px;
+    --fib-2: 8px;
+    --fib-3: 13px;
+    --fib-4: 21px;
+    --fib-5: 34px;
+    --fib-6: 55px;
+
+    /* Font */
+    --font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
     margin: 0;
-    padding: 20px;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden; /* Mencegah scroll di body utama */
+}
+
+body {
+    font-family: var(--font-family-sans);
+    background-color: var(--netflix-background);
+    color: var(--netflix-primary-text);
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
 }
 
-.container {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    width: 80%;
-    max-width: 900px;
-    text-align: center;
-}
-
-.room-controls {
+.player-wrapper {
+    width: 100%;
+    height: 100%;
     display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    position: relative;
 }
 
-.control-group {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 6px;
-    margin: 10px;
-    flex-basis: 45%; /* Agar bisa 2 kolom */
-    min-width: 250px; /* Agar tidak terlalu kecil di layar kecil */
-}
-
-input[type="text"] {
-    padding: 8px;
-    margin-right: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: calc(100% - 22px); /* Sesuaikan dengan padding dan border */
-    margin-bottom: 10px;
-}
-
-button {
-    padding: 8px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-#video-player-container {
-    position: relative; /* Untuk positioning kursor */
-    width: 100%;
-    max-width: 720px; /* Sesuaikan dengan lebar video */
-    margin: 20px auto;
-    background-color: #000; /* Latar belakang untuk video player */
-}
-
-#mainVideoPlayer {
-    display: block;
-    width: 100%;
-    height: auto;
-}
-
-.message {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 4px;
-}
-
-.message.success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.message.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.cursor {
+/* Header Player */
+.player-header {
     position: absolute;
-    width: 20px; /* Lebih besar agar terlihat */
-    height: 20px;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="rgba(255,0,0,0.7)" stroke="black" stroke-width="1"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>'); /* Kursor SVG merah */
-    background-size: contain;
-    pointer-events: none; /* Agar tidak mengganggu interaksi dengan video */
-    transform: translate(-2px, -2px); /* Sedikit offset agar ujung kursor pas */
-    z-index: 1000;
-    transition: top 0.05s linear, left 0.05s linear; /* Transisi lebih cepat */
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: var(--fib-3) var(--fib-4); /* Fibonacci */
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.player-logo {
+    color: var(--netflix-red);
+    font-size: 1.8rem; /* Bisa disesuaikan dengan Fibonacci jika mau, misal 21px atau 34px */
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.video-title-container {
+    display: flex;
+    align-items: center;
+    gap: var(--fib-3); /* Fibonacci */
+    position: absolute; /* Agar bisa di tengah */
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--netflix-secondary-text);
+}
+
+#videoTitle {
+    font-size: 1.2rem; /* Bisa disesuaikan */
+    font-weight: 500;
+    color: var(--netflix-primary-text);
+}
+
+.header-icon-button {
+    background: none;
+    border: none;
+    color: var(--netflix-primary-text);
+    font-size: 1.5rem; /* Bisa disesuaikan */
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+    padding: var(--fib-2); /* Fibonacci */
+}
+.header-icon-button:hover {
+    opacity: 1;
+}
+
+/* Konten Video Utama */
+.video-main-content {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000; /* Latar belakang hitam untuk video player */
+    width: 100%;
+    height: 100%;
+}
+
+#main-video {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    outline: none;
+}
+/* Styling kontrol video (opsional, bisa kompleks) */
+#main-video::-webkit-media-controls-panel {
+    background-color: rgba(20, 20, 20, 0.85);
+}
+#main-video::-webkit-media-controls-play-button,
+#main-video::-webkit-media-controls-timeline,
+#main-video::-webkit-media-controls-current-time-display,
+#main-video::-webkit-media-controls-time-remaining-display,
+#main-video::-webkit-media-controls-mute-button,
+#main-video::-webkit-media-controls-volume-slider,
+#main-video::-webkit-media-controls-fullscreen-button {
+    filter: brightness(0) invert(1);
+}
+
+/* Sidebar Chat */
+.chat-sidebar {
+    position: fixed;
+    top: 0;
+    right: -380px; /* Mulai dari luar layar, bisa disesuaikan dengan Fibonacci, misal -377px (fib(13)+fib(14)) */
+    width: 377px; /* Lebar sidebar, contoh Fibonacci: 233px + 144px */
+    height: 100%;
+    background-color: var(--netflix-surface);
+    box-shadow: -var(--fib-1) 0 var(--fib-3) rgba(0,0,0,0.5); /* Fibonacci */
+    display: flex;
+    flex-direction: column;
+    transition: right 0.35s cubic-bezier(0.25, 0.1, 0.25, 1); /* Transisi lebih smooth */
+    z-index: 1001;
+}
+
+.chat-sidebar.open {
+    right: 0;
+}
+
+.chat-sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--fib-3) var(--fib-4); /* Fibonacci */
+    background-color: rgba(0,0,0,0.2);
+    border-bottom: 1px solid var(--netflix-border);
+}
+
+.chat-sidebar-header h2 {
+    font-size: 1.1rem; /* Bisa disesuaikan */
+    margin: 0;
+    font-weight: 500;
+}
+
+#messages {
+    list-style-type: none;
+    padding: var(--fib-3); /* Fibonacci */
+    flex-grow: 1;
+    overflow-y: auto;
+    word-wrap: break-word;
+}
+
+#messages li {
+    padding: var(--fib-2) var(--fib-0); /* Fibonacci */
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: var(--netflix-secondary-text);
+}
+#messages li strong {
+    color: var(--netflix-primary-text);
+    font-weight: 500;
+}
+#messages li + li {
+    margin-top: var(--fib-2); /* Jarak antar pesan */
+}
+
+
+#chat-form {
+    display: flex;
+    padding: var(--fib-3); /* Fibonacci */
+    border-top: 1px solid var(--netflix-border);
+    background-color: rgba(0,0,0,0.2);
+}
+
+#chat-input {
+    flex-grow: 1;
+    padding: var(--fib-2) var(--fib-3); /* Fibonacci */
+    border: 1px solid var(--netflix-border);
+    border-radius: var(--fib-1); /* Fibonacci */
+    background-color: var(--netflix-background);
+    color: var(--netflix-primary-text);
+    margin-right: var(--fib-2); /* Fibonacci */
+    outline: none;
+    font-size: 0.9rem;
+}
+#chat-input:focus {
+    border-color: var(--netflix-red);
+    box-shadow: 0 0 0 var(--fib-1) rgba(229, 9, 20, 0.25); /* Fibonacci */
+}
+
+#chat-form button {
+    background-color: var(--netflix-red);
+    color: var(--netflix-primary-text);
+    border: none;
+    padding: var(--fib-2) var(--fib-3); /* Fibonacci */
+    border-radius: var(--fib-1); /* Fibonacci */
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#chat-form button:hover {
+    background-color: var(--netflix-red-darker);
+}
+
+/* Scrollbar Styling (Opsional) */
+::-webkit-scrollbar {
+    width: var(--fib-2); /* Fibonacci */
+}
+::-webkit-scrollbar-track {
+    background: var(--netflix-surface);
+}
+::-webkit-scrollbar-thumb {
+    background: #424242;
+    border-radius: var(--fib-1); /* Fibonacci */
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Penyesuaian untuk layar kecil jika diperlukan */
+@media (max-width: 768px) {
+    .player-header {
+        padding: var(--fib-2) var(--fib-3);
+    }
+    .player-logo {
+        font-size: 1.5rem;
+    }
+    .video-title-container {
+        /* Mungkin sembunyikan judul di layar kecil atau buat lebih kecil */
+        display: none; 
+    }
+    .chat-sidebar {
+        width: 300px; /* Sesuaikan lebar sidebar */
+        right: -300px;
+    }
+     .header-icon-button {
+        font-size: 1.3rem;
+    }
+}
+@media (max-width: 480px) {
+    .chat-sidebar {
+        width: 100%; /* Sidebar chat mengisi seluruh layar */
+        right: -100%;
+    }
 }
