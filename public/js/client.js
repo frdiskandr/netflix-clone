@@ -13,6 +13,7 @@ const toggleChatButton = document.getElementById('toggleChatButton');
 const chatSidebar = document.getElementById('chatSidebar');
 const closeChatButton = document.getElementById('closeChatButton');
 const backButton = document.getElementById('backButton');
+const refreshButton = document.getElementById('refreshButton');
 
 // Flag untuk mencegah event loop tak terbatas
 let isReceivingSync = false;
@@ -118,23 +119,105 @@ chatForm.addEventListener('submit', (e) => {
     }
 });
 
-socket.on('newChatMessage', (msg) => {
-    const item = document.createElement('li');
-    
-    const userStrong = document.createElement('strong');
-    userStrong.textContent = `${msg.user}: `;
-    item.appendChild(userStrong);
-    
-    // Untuk keamanan dasar, gunakan textContent untuk teks pesan
-    item.appendChild(document.createTextNode(msg.text));
-    
-    messages.appendChild(item);
-    messages.scrollTop = messages.scrollHeight; // Auto-scroll ke bawah
+// Tambahkan di bagian awal file setelah deklarasi socket
+let username = getCookie('username');
+const usernameModal = document.getElementById('usernameModal');
+const usernameForm = document.getElementById('usernameForm');
+const changeVideoModal = document.getElementById('changeVideoModal');
+const changeVideoForm = document.getElementById('changeVideoForm');
+const changeVideoButton = document.getElementById('changeVideoButton');
+const onlineUsersList = document.getElementById('onlineUsersList');
+
+// Cookie functions
+function setCookie(name, value, days) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+}
+
+// Username handling
+if (!username) {
+    usernameModal.classList.add('show');
+}
+
+usernameForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    username = document.getElementById('usernameInput').value.trim();
+    if (username) {
+        setCookie('username', username, 7);
+        usernameModal.classList.remove('show');
+        socket.emit('setUsername', username);
+    }
 });
 
+// Change video handling
+changeVideoButton.addEventListener('click', () => {
+    changeVideoModal.classList.add('show');
+});
+
+changeVideoForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const videoUrl = document.getElementById('videoUrlInput').value.trim();
+    if (videoUrl) {
+        socket.emit('changeVideo', { url: videoUrl, title: 'Video Baru' });
+        changeVideoModal.classList.remove('show');
+        document.getElementById('videoUrlInput').value = '';
+    }
+});
+
+// Update chat message handling
+socket.on('newChatMessage', (msg) => {
+    const item = document.createElement('li');
+    const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    item.innerHTML = `<span class="message-time">[${time}]</span> <strong>${msg.user}:</strong> ${msg.text}`;
+    messages.appendChild(item);
+    messages.scrollTop = messages.scrollHeight;
+});
+
+// Online users handling
+socket.on('updateOnlineUsers', (users) => {
+    onlineUsersList.innerHTML = '';
+    users.forEach(user => {
+        const li = document.createElement('li');
+        li.textContent = user;
+        onlineUsersList.appendChild(li);
+    });
+});
+
+// Video change handling
+socket.on('videoChanged', (data) => {
+    video.src = data.url;
+    videoTitleElement.textContent = data.title;
+});
+
+// Emit username on connection if exists
+if (username) {
+    socket.emit('setUsername', username);
+}
 // (Opsional) Memberi tahu server jika judul video berubah di klien (jika ada fitur ganti video)
 // video.addEventListener('loadedmetadata', () => {
 // if (!isReceivingSync && video.src !== videoState.src) { // Cek jika sumber video berubah oleh klien
 // socket.emit('videoSourceChanged', video.src);
 // }
 // });
+
+
+//membuat fungsi refresh button untuk refresh semua halaman
+refreshButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    socket.emit('refresh', true);
+    window.location.reload();
+    return
+})
+
+socket.on('refresh', (s) => {
+    window.location.reload();
+    return
+})

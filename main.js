@@ -11,11 +11,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let videoState = {
-    // Ganti dengan URL video default Anda
-    src: "https://resource.flexclip.com/templates/video/720p/high-tech-space-universe-science-fiction-star-war-earth-planet-movie-trailer-teaser-opener-intro.mp4?v=1.1.0.5.8", // video
-    isPlaying: false,
-    currentTime: 0,
-    lastUpdate: Date.now()
+  // Ganti dengan URL video default Anda
+  src: "/video", // video
+  isPlaying: false,
+  currentTime: 0,
+  lastUpdate: Date.now(),
 };
 
 // init app and middleware
@@ -42,6 +42,7 @@ server.listen(Port, () => {
 
 //! socket
 // --- LOGIKA SOCKET.IO ---
+const onlineUsers = new Map();
 const ROOM_NAME = "global-watch-party";
 
 io.on("connection", (socket) => {
@@ -60,6 +61,24 @@ io.on("connection", (socket) => {
   socket.emit("syncInitialState", videoState);
 
   // -- Menangani Event dari Klien --
+
+ // Username handling
+ socket.on('setUsername', (username) => {
+  onlineUsers.set(socket.id, username);
+  io.to(ROOM_NAME).emit('updateOnlineUsers', Array.from(onlineUsers.values()));
+});
+
+
+  // Video change handling
+  socket.on('changeVideo', (data) => {
+    videoState.src = data.url;
+    videoState.currentTime = 0;
+    videoState.isPlaying = false;
+    io.to(ROOM_NAME).emit('videoChanged', {
+      url: data.url,
+      title: data.title
+    });
+  });
 
   // Ketika klien menekan play
   socket.on("play", (time) => {
@@ -86,17 +105,25 @@ io.on("connection", (socket) => {
     socket.to(ROOM_NAME).emit("seekVideo", time);
   });
 
-  // Ketika klien mengirim pesan chat
-  socket.on("chatMessage", (msg) => {
-    // Broadcast pesan ke SEMUA pengguna di room (termasuk pengirim)
-    io.to(ROOM_NAME).emit("newChatMessage", {
-      user: `User-${socket.id.substring(0, 5)}`,
-      text: msg,
+
+   // Update chat message handling
+   socket.on('chatMessage', (msg) => {
+    const username = onlineUsers.get(socket.id) || `User-${socket.id.substring(0, 5)}`;
+    io.to(ROOM_NAME).emit('newChatMessage', {
+      user: username,
+      text: msg
     });
   });
 
-  // Ketika klien terputus
-  socket.on("disconnect", () => {
+  // ketika refresh button ditekan
+  socket.on('refresh', () => {
+    socket.to(ROOM_NAME).emit('refresh');
+  });
+
+  // Update disconnect handling
+  socket.on('disconnect', () => {
+    onlineUsers.delete(socket.id);
+    io.to(ROOM_NAME).emit('updateOnlineUsers', Array.from(onlineUsers.values()));
     console.log(`Pengguna terputus: ${socket.id}`);
   });
 });

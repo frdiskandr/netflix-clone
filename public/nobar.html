@@ -3,11 +3,22 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nonton Bareng - Gaya Netflix</title>
+    <title>Nonton Bareng - frdiskndr</title>
     <link rel="stylesheet" href="./style/nobar.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
+    <!-- Modal Username -->
+    <div id="usernameModal" class="modal">
+        <div class="modal-content">
+            <h2>Masukkan Username</h2>
+            <form id="usernameForm">
+                <input type="text" id="usernameInput" placeholder="Username" required />
+                <button type="submit">Mulai Nonton</button>
+            </form>
+        </div>
+    </div>
+
     <div class="player-wrapper">
         <header class="player-header">
             <a href="/" class="player-logo">frdiskndr</a>
@@ -16,10 +27,18 @@
                     <i class="fas fa-arrow-left"></i>
                 </button>
                 <h1 id="videoTitle">Judul Video Saat Ini</h1>
+                <button id="changeVideoButton" class="header-icon-button" aria-label="Ganti Video">
+                    <i class="fas fa-film"></i>
+                </button>
             </div>
-            <button id="toggleChatButton" class="header-icon-button" aria-label="Toggle Chat">
-                <i class="fas fa-comments"></i>
-            </button>
+            <div class="header-buttons">
+                <button id="refreshButton" class="header-icon-button" aria-label="Refresh">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button id="toggleChatButton" class="header-icon-button" aria-label="Toggle Chat">
+                    <i class="fas fa-comments"></i>
+                </button>
+            </div>
         </header>
 
         <main class="video-main-content">
@@ -33,13 +52,30 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <ul id="messages">
-                </ul>
+            
+            <!-- Daftar Pengguna Online -->
+            <div class="online-users">
+                <h3>Pengguna Online</h3>
+                <ul id="onlineUsersList"></ul>
+            </div>
+
+            <ul id="messages"></ul>
             <form id="chat-form">
                 <input id="chat-input" autocomplete="off" placeholder="Ketik pesan..." />
                 <button type="submit" aria-label="Kirim Pesan"><i class="fas fa-paper-plane"></i></button>
             </form>
         </aside>
+
+        <!-- Modal Ganti Video -->
+        <div id="changeVideoModal" class="modal">
+            <div class="modal-content">
+                <h2>Ganti Video</h2>
+                <form id="changeVideoForm">
+                    <input type="text" id="videoUrlInput" placeholder="Masukkan URL video" required />
+                    <button type="submit">Ganti Video</button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
