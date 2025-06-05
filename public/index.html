@@ -214,12 +214,12 @@
       <section class="content-section">
         <h2 class="section-title">Terbaru di frdiskndr</h2>
         <div class="movie-row">
-          <div class="movie-card">
-            <img src="" alt="" />
+          <!-- <div class="movie-card">
+            <img src="https://i.pinimg.com/736x/f3/1c/12/f31c127bb4c7fced9c399da902fbb7bd.jpg" alt="" />
             <video muted>
               <source src="./images/mov1.mp4" type="video/mp4" />
             </video>
-          </div>
+          </div> -->
           <!-- Tambahkan lebih banyak movie-card sesuai kebutuhan -->
         </div>
       </section>
@@ -283,14 +283,16 @@
 
     <script>
       const data = [
-        // {
-        //   id: 1,
-        //   link: "/video",
-        // },
-        // {
-        //   id: 2,
-        //   link: "/video",
-        // },
+        {
+          id: 1,
+          link: "/vi",
+          imgLink: 'https://i.pinimg.com/736x/f3/1c/12/f31c127bb4c7fced9c399da902fbb7bd.jpg'
+        },
+        {
+          id: 2,
+          link: "/vi",
+          imgLink: 'https://i.pinimg.com/736x/f3/1c/12/f31c127bb4c7fced9c399da902fbb7bd.jpg'
+        },
         // {
         //   id: 3,
         //   link: "/video",
@@ -325,13 +327,16 @@
         Array.from(movieContainers).forEach((container) => {
           data.forEach((movie) => {
             try {
+              const imglink = movie.imgLink;
               const movieCard = document.createElement("div");
               movieCard.classList.add("movie-card");
               movieCard.innerHTML = `
+                            <img src="${imglink}" alt="" />
                             <video muted>
                                 <source src="${movie.link}" type="video/mp4" />
                             </video>
                         `;
+            
               container.appendChild(movieCard);
             } catch (error) {
               console.error(
