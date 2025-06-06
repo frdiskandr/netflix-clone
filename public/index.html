@@ -175,7 +175,7 @@
   </head>
   <body>
     <header>
-      <a href="/" class="logo">frdiskndr</a>
+      <a href="/" class="logo">Iflix</a>
       <nav>
         <a href="#">Beranda</a>
         <a href="#">Serial TV</a>
@@ -212,7 +212,7 @@
       </section>
 
       <section class="content-section">
-        <h2 class="section-title">Terbaru di frdiskndr</h2>
+        <h2 class="section-title">Terbaru di Iflix</h2>
         <div class="movie-row">
           <!-- <div class="movie-card">
             <img src="https://i.pinimg.com/736x/f3/1c/12/f31c127bb4c7fced9c399da902fbb7bd.jpg" alt="" />
@@ -286,37 +286,52 @@
         {
           id: 1,
           link: "/vi",
-          imgLink: 'https://i.pinimg.com/736x/f3/1c/12/f31c127bb4c7fced9c399da902fbb7bd.jpg'
+          imgLink:
+            "https://i.pinimg.com/736x/f3/1c/12/f31c127bb4c7fced9c399da902fbb7bd.jpg",
         },
         {
           id: 2,
           link: "/vi",
-          imgLink: 'https://i.pinimg.com/736x/f3/1c/12/f31c127bb4c7fced9c399da902fbb7bd.jpg'
+          imgLink:
+            "https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/p2/41/2025/06/05/The-Ugly-3602600803.jpg",
         },
-        // {
-        //   id: 3,
-        //   link: "/video",
-        // },
-        // {
-        //   id: 4,
-        //   link: "/video",
-        // },
-        // {
-        //   id: 5,
-        //   link: "/video",
-        // },
-        // {
-        //   id: 6,
-        //   link: "/video",
-        // },
-        // {
-        //   id: 7,
-        //   link: "/video",
-        // },
-        // {
-        //   id: 8,
-        //   link: "/video",
-        // },
+        {
+          id: 1,
+          link: "/images/mov1.mp4",
+          imgLink:
+            "https://i.pinimg.com/736x/da/87/ed/da87ed1a4c5f8fa18eb6204abfe17999.jpg",
+        },
+        {
+          id: 2,
+          link: "/images/mov2.mp4",
+          imgLink:
+            "https://i.pinimg.com/736x/ed/31/12/ed311288af552ca1554995f2c59d0a56.jpg",
+        },
+
+        {
+          id: 1,
+          link: "/vi",
+          imgLink:
+            "https://i.pinimg.com/736x/a6/e9/23/a6e92308157e60cfc9f89756ea022f6d.jpg",
+        },
+        {
+          id: 2,
+          link: "/vi",
+          imgLink:
+            "https://i.pinimg.com/736x/78/f0/2e/78f02e6a0ae0e2e86316224de52cd8df.jpg",
+        },
+        {
+          id: 1,
+          link: "/images/mov1.mp4",
+          imgLink:
+            "https://i.pinimg.com/736x/d0/dc/c7/d0dcc7fd58f2348aee4b16a47a28a7f2.jpg",
+        },
+        {
+          id: 2,
+          link: "/images/mov2.mp4",
+          imgLink:
+            "https://i.pinimg.com/736x/ef/f7/7c/eff77c30077a888c1b074405175cd5f5.jpg",
+        },
       ];
 
       const movieList = () => {
@@ -336,7 +351,7 @@
                                 <source src="${movie.link}" type="video/mp4" />
                             </video>
                         `;
-            
+
               container.appendChild(movieCard);
             } catch (error) {
               console.error(
