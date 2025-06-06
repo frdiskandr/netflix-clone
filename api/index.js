@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import router from "./api/routers/router.js";
+import router from "./routers/router.js";
 import dotenv from "dotenv";
 import { Server } from "socket.io";
 import http from "http";
