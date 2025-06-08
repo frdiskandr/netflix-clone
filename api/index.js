@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 
 let videoState = {
   // Ganti dengan URL video default Anda
-  src: "https://s3.ap-south-1.amazonaws.com/invideo-block-assets/Template_Block_Assets/Template_sample_clips/one_click_preview/production/Epic_Journey_Of_The_Warrior_Queen_production_story_30412_16_9_1731333160811_SD6.mp4", // video
+  src: "/images/intro-mabar.mp4", // video
   isPlaying: false,
   currentTime: 0,
   lastUpdate: Date.now(),
