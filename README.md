@@ -40,24 +40,13 @@ Iflix adalah aplikasi web streaming video yang memungkinkan pengguna untuk menon
 
 1.  **Clone repositori ini:**
     ```bash
-    git clone https://github.com/username/iflix.git
-    cd iflix
+    git clone https://github.com/frdiskandr/netflix-clone.git
+    cd netflix-clone
     ```
 
 2.  **Instal dependensi proyek:**
     ```bash
     npm install
-    ```
-
-3.  **Buat file `.env`** di root direktori proyek dan tambahkan URL koneksi MongoDB Anda:
-    ```
-    DATABASE_URL="mongodb+srv://<user>:<password>@<cluster-url>/<database-name>?retryWrites=true&w=majority"
-    ```
-    Ganti `<user>`, `<password>`, `<cluster-url>`, dan `<database-name>` dengan informasi koneksi MongoDB Anda.
-
-4.  **Sinkronkan skema database** dengan Prisma:
-    ```bash
-    npx prisma db push
     ```
 
 ### Menjalankan Aplikasi
